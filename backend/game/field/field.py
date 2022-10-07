@@ -25,26 +25,29 @@ class Field:
         self.size_x = size_x
         self.size_y = size_y
         self.amount_of_bombs = amount_of_bombs
+
+        assert self.amount_of_bombs <= self.size_y * self.size_x, "Amount of bombs can't be more than cells amount :)"
+
         self.field = None
         self.bomb_coordinates = []
 
-    def create_field(self):
+    def create_field(self) -> List:
         if self.field is None:
             self.field = [["[ ]"] * self.size_x for _ in range(self.size_y)]
             return self.field
         raise FieldAlreadyExistsException
 
-    def fill_field_with_bombs(self):
+    def fill_field_with_bombs(self) -> List:
 
         for _ in range(self.amount_of_bombs):
             bomb_coordinates = self._generate_coordinates_for_bomb()
 
-            self.field[bomb_coordinates.x][bomb_coordinates.y] = "X"
+            self.field[bomb_coordinates.y][bomb_coordinates.x] = "X"
             self.bomb_coordinates.append(bomb_coordinates)
 
         return self.field
 
-    def _generate_coordinates_for_bomb(self):
+    def _generate_coordinates_for_bomb(self) -> Coordinates:
 
         if len(self.bomb_coordinates) == self.amount_of_bombs:
             raise FieldAlreadyFilledException
@@ -61,19 +64,19 @@ class Field:
 
         return bomb_coordinates
 
-    def fill_field_with_numbers(self):
-        for x_position in range(self.size_x):
-            for y_position in range(self.size_y):
+    def fill_field_with_numbers(self) -> List:
+        for y_position in range(self.size_y):
+            for x_position in range(self.size_x):
 
-                if self.field[x_position][y_position] == "X":
+                if self.field[y_position][x_position] == "X":
                     continue
 
                 current_position = Coordinates(x=x_position, y=y_position)
-                bombs_around = self._check_cells_around_current_coordinates(current_position)
-                # self.field[x_position][y_position] = bombs_around
-                self.field[x_position][y_position] = str(bombs_around)
+                bombs_around = self._check_bombs_around_current_coordinates(current_position)
+                self.field[y_position][x_position] = str(bombs_around)
+        return self.field
 
-    def _check_cells_around_current_coordinates(self, coordinates: Coordinates) -> int:
+    def _check_bombs_around_current_coordinates(self, coordinates: Coordinates) -> int:
 
         top_left = Coordinates(x=coordinates.x - 1, y=coordinates.y + 1)
         top = Coordinates(x=coordinates.x, y=coordinates.y + 1)
