@@ -9,9 +9,9 @@ class Coordinates:
         self.x = x
         self.y = y
 
-    def __eq__(self, other_pair_of_coordinated):
+    def __eq__(self, other_pair_of_coordinates):
         if isinstance(self, Coordinates):
-            return self.x == other_pair_of_coordinated.x and self.y == other_pair_of_coordinated.y
+            return self.x == other_pair_of_coordinates.x and self.y == other_pair_of_coordinates.y
         raise TypeError
 
     def __repr__(self):
