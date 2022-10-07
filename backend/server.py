@@ -52,6 +52,12 @@ class Server:
 
 class MessageHandler:
 
+    """
+        Object for storing some amount of most recent messages that
+        will be sent to new client after connection for the sake of
+        saving chat history (I hope :) ).
+    """
+
     def __init__(self, *, amount_of_messages_to_store: int = 50):
         self.messages_container = collections.deque(maxlen=amount_of_messages_to_store)
 
