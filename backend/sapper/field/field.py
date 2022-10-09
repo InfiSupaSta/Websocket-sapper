@@ -1,7 +1,8 @@
-from typing import List
+from typing import List, Union
 import random
 
-from exceptions import FieldAlreadyFilledException, FieldAlreadyExistsException
+from backend.sapper.field.exceptions import FieldAlreadyFilledException, FieldAlreadyExistsException, GameOverException, \
+    WrongCoordinatesException, CellAlreadyRevealedException
 
 
 class Coordinates:
@@ -29,11 +30,15 @@ class Field:
         assert self.amount_of_bombs <= self.size_y * self.size_x, "Amount of bombs can't be more than cells amount :)"
 
         self.field = None
+        self.field_to_show_for_user = None
         self.bomb_coordinates = []
+
+    def _generate_field(self, *, element_in_cells_of_field: str = "[ ]"):
+        return [[element_in_cells_of_field] * self.size_x for _ in range(self.size_y)]
 
     def create_field(self) -> List:
         if self.field is None:
-            self.field = [["[ ]"] * self.size_x for _ in range(self.size_y)]
+            self.field = self._generate_field()
             return self.field
         raise FieldAlreadyExistsException
 
@@ -59,7 +64,6 @@ class Field:
             bomb_coordinates = Coordinates(x=random_x_position_coordinate, y=random_y_position_coordinate)
             if bomb_coordinates in self.bomb_coordinates:
                 continue
-
             break
 
         return bomb_coordinates
@@ -98,8 +102,53 @@ class Field:
 
         return bombs_around
 
-    def get_field(self) -> List[List[str]]:
+    def get_field(self) -> Union[List[List[str]], None]:
         return self.field
+
+    def get_ready_for_game_field(self):
+        """
+            Creating a field for game with full information
+            about bombs and nearby cells.
+        """
+        self.create_field()
+        self.fill_field_with_bombs()
+        self.fill_field_with_numbers()
+        return self.get_field()
+
+    def get_field_to_show_for_user(self):
+        """
+            Creating a field for show it to player
+            during the game. After each move it will
+            be compared to self.get_ready_for_game_field()
+            and update accordingly to game logic.
+        """
+        if self.field_to_show_for_user is None:
+            self.field_to_show_for_user = self._generate_field()
+        return self.field_to_show_for_user
+
+    def update_player_field(self, *, x_coordinate: int, y_coordinate: int):
+
+        while True:
+            if x_coordinate > self.size_x or y_coordinate > self.size_y:
+                print("Pls give correct x and y coordinates.")
+                raise WrongCoordinatesException
+            visible_for_player_cell_info = self.field_to_show_for_user[x_coordinate][y_coordinate]
+            if visible_for_player_cell_info == "[ ]":
+                actual_cell_info = self.field[x_coordinate][y_coordinate]
+                self.field_to_show_for_user[x_coordinate][y_coordinate] = actual_cell_info
+                break
+            else:
+                print("You are already unlocked this cell.")
+                raise CellAlreadyRevealedException
+
+        self._check_last_move(actual_cell_info)
+        return self.field_to_show_for_user
+
+    def _check_last_move(self, cell_info: str):
+        if cell_info == "X":
+            for row in self.field_to_show_for_user:
+                print(row)
+            raise GameOverException
 
     def __repr__(self):
         human_readable_representation = f"Field(size_x={self.size_x}, size_y={self.size_y})"
