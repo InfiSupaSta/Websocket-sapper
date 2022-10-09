@@ -1,8 +1,11 @@
 from typing import List, Union
 import random
 
-from backend.sapper.field.exceptions import FieldAlreadyFilledException, FieldAlreadyExistsException, GameOverException, \
-    WrongCoordinatesException, CellAlreadyRevealedException
+from backend.sapper.field.exceptions import (FieldAlreadyFilledException,
+                                             FieldAlreadyExistsException,
+                                             GameOverException,
+                                             WrongCoordinatesException,
+                                             CellAlreadyRevealedException)
 
 
 class Coordinates:
