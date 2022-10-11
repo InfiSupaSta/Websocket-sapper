@@ -1,8 +1,12 @@
-import {messageButton, messageInput, errorsInput} from './PageElements.js';
+import {messageButton, messageInput, errorsInput} from './pageElements.js';
+import {isOpen} from './websocketHandler.js';
+import {fieldWidth, fieldHeight} from './pageElements.js';
+
 
 export function messageButtonOnClick(currentWebSocket) {
     const message = messageInput.value
 
+    if (!isOpen(currentWebSocket)) return;
     if (message !== "") {
         currentWebSocket.send(message)
         messageInput.value = ""
@@ -20,4 +24,10 @@ export function sendMessageFromInputIfEnterClicked(event) {
         messageButton.onclick()
     }
 }
+
+
+
+
+
+
 

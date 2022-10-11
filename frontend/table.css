@@ -36,3 +36,30 @@ body {
     margin-bottom: 10px;
 }
 
+#game-table {
+    border: black 2px solid;
+    border-collapse: collapse;
+    width: 80%;
+    position: relative;
+
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 30px;
+}
+
+td {
+    border: black 2px solid;
+    text-align: center;
+    border-collapse: collapse;
+    width: 4px;
+}
+
+.button {
+    margin-top: 5px;
+    margin-right: 5px;
+}
+
+.input {
+    margin-bottom: 5px;
+}

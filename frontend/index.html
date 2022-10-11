@@ -7,6 +7,8 @@
 </head>
 <body>
 
+<script type="module" src="./main.js"></script>
+
 <h2 class="center-position"> Last messages in the chat: </h2>
 
 <div id="messages-container"> </div>
@@ -15,11 +17,20 @@
 
     <div id="errors"></div><br>
     <input id="message" type="text"><br>
-    <input id="send-message-button" type="button" value="Send message">
+    <input id="send-message-button" type="button" value="Send message"><br>
+
+    <div id="sapper">
+        <div id="game"></div>
+        Width: <input class="input"  id="width" type="number"><br>
+        Height: <input class="input"  id="height" type="number"><br>
+        <input class="button" id="start-game" type="button" value="Start the sapper game!">
+        <input class="button" id="finish-game" disabled type=button value="Drop the game.">
+    </div>
 
 </div>
 
-<script type="module" src="./main.js"></script>
+<table id="game-table">
+</table>
 
 </body>
 
