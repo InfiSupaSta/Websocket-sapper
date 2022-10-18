@@ -1,4 +1,4 @@
-Sapper game for 2 players with chat based on websockets, 
+Sapper game for few players with chat based on websockets, 
 python as backend and js as frontend. Game is on 
 the stage of development :)
 
