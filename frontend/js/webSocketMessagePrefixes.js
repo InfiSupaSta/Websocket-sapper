@@ -1,0 +1,8 @@
+export const exceedConnectionsLimitPrefix = "__server_exceeded_limit_of_connections"
+export const serverSapperResponse = "__sapper_server_response_with_cell_info"
+export const drawTableForOtherClient = "__sapper_draw_table_for_other_clients"
+export const gameStartedPrefix = "__sapper_game_started"
+export const gameFinishedPrefix = "__sapper_game_finished"
+export const gameInitializerPrefix = "__sapper_init_field_size"
+export const gameMoveIdentifierPrefix = "__sapper_cell_clicked"
+export const gameTableDeletePrefix = "__sapper_game_table_delete"

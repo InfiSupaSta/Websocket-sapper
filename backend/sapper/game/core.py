@@ -1,7 +1,7 @@
-from backend.sapper.field.field import Field
+from backend.sapper.field.core import Field
 from backend.sapper.player.exceptions import PlayerCantJoinException
 from backend.sapper.field.exceptions import GameOverException
-from backend.sapper.player.player import PlayersContainer, Player
+from backend.sapper.player.core import PlayersContainer, Player
 
 
 class Game:
@@ -16,17 +16,23 @@ class Game:
         self.players = PlayersContainer(amount_of_players=self.expected_amount_of_players)
         self.is_game_started = False
         self.is_player_lost = False
-        self.is_game_finished = None
+        self.is_game_finished = False
 
     def start_game(self):
         if self.is_game_finished is not True and len(self.players) == self.expected_amount_of_players:
-            self.field.get_field_to_show_for_user()
-            self.field.get_ready_for_game_field()
-            self.is_game_started = True
+            self.start_game_without_players_requirement()
+
+    def start_game_without_players_requirement(self):
+        self.field.get_field_to_show_for_user()
+        self.field.get_ready_for_game_field()
+        self.is_game_started = True
 
     def finish_game(self):
         if self.is_game_started is True and self.is_player_lost is True:
             self.is_game_finished = True
+
+    def finish_game_without_players_requirement(self):
+        self.is_game_finished = True
 
     def wait_for_player_move(self):
         """

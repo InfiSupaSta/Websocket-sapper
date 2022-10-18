@@ -1,6 +1,5 @@
 import {messageButton, messageInput, errorsInput} from './pageElements.js';
-import {isOpen} from './websocketHandler.js';
-import {fieldWidth, fieldHeight} from './pageElements.js';
+import {isOpen} from './webSocketHandler.js';
 
 
 export function messageButtonOnClick(currentWebSocket) {

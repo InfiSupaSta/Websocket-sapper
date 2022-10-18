@@ -1,5 +1,5 @@
-from game.game import Game
-from backend.sapper.player.player import Player
+from game.core import Game
+from backend.sapper.player.core import Player
 
 if __name__ == "__main__":
     game = Game(

@@ -1,4 +1,7 @@
+from typing import Union
+
 from backend.sapper.player.exceptions import OtherPlayerTurnException, PlayerCantJoinException
+from backend.utils.validator.core import QuantityValidator
 
 
 class Player:
@@ -24,18 +27,19 @@ class Player:
 
 
 class PlayersContainer:
+    amount_of_players = QuantityValidator()
 
-    def __init__(self, amount_of_players: int = 2):
+    def __init__(self, amount_of_players: Union[int, None]):
         self.amount_of_players = amount_of_players
         self.players = []
 
-    def check_if_player_can_join(self):
+    def _check_if_player_can_join(self):
         if len(self.players) < self.amount_of_players:
             return True
         return False
 
     def add_player(self, player: Player):
-        if self.check_if_player_can_join() is False:
+        if self._check_if_player_can_join() is False:
             raise PlayerCantJoinException
         self.players.append(player)
 

@@ -1,11 +1,12 @@
-import {isOpen, webSocket} from './websocketHandler.js';
-import {fieldHeight, fieldWidth} from "./pageElements.js";
+import {isOpen, webSocket} from './webSocketHandler.js';
+import {fieldHeight, fieldWidth, finishGameButton, startGameButton} from "./pageElements.js";
 import {gameTable} from './pageElements.js';
-
-export const gameInitializerPrefix = "__sapper_init_field_size"
-export const gameMoveIdentifierPrefix = "__sapper_cell_clicked"
-export const gameTableDeletePrefix = "__sapper_game_table_delete"
-const drawTableForOtherClient = "__sapper_draw_table_for_other_clients"
+import {
+    gameInitializerPrefix,
+    gameMoveIdentifierPrefix,
+    gameTableDeletePrefix,
+    drawTableForOtherClient
+} from './webSocketMessagePrefixes';
 
 export function drawTable(currentWebSocket) {
     const width = fieldWidth.value
@@ -13,7 +14,6 @@ export function drawTable(currentWebSocket) {
 
     if (!isOpen(currentWebSocket)) return;
     if (width !== "" && height !== "") {
-        // start drawing
         const widthToInt = parseInt(width)
         const heightToInt = parseInt(height)
         const numberArray = [...Array(heightToInt).keys()]
@@ -21,12 +21,11 @@ export function drawTable(currentWebSocket) {
         numberArray.forEach((number) => {
             gameTable.insertAdjacentHTML("beforeend", drawTableRow(number, widthToInt))
         })
-        // end drawing
 
         const initMessage = gameInitializerPrefix + " " + width + " " + height
-        const drawTable_forOthersMessage = drawTableForOtherClient + " " + width + " " + height
+        const drawTableForOthersMessage = drawTableForOtherClient + " " + width + " " + height
         currentWebSocket.send(initMessage)
-        currentWebSocket.send(drawTable_forOthersMessage)
+        currentWebSocket.send(drawTableForOthersMessage)
     }
 }
 
@@ -43,21 +42,41 @@ export function drawTableRow(xPosition, elementsAmount) {
 }
 
 export function getElementId(event) {
-    // console.log(event.target.id)
     const message = gameMoveIdentifierPrefix + " " + event.target.id
-    console.log(message)
     webSocket.send(message)
     return event.target.id
+}
+
+export function colorCellToGreen(event) {
+    const cellId = event.target.id
+    const cellColor = document.getElementById(cellId).style.backgroundColor
+
+    if (event.which !== 2) {
+        return
+    }
+
+    if (cellColor === "") {
+        document.getElementById(cellId).style.backgroundColor = "green"
+    } else {
+        document.getElementById(cellId).style.backgroundColor = ""
+    }
 }
 
 export function checkFieldInputCorrect() {
     return fieldWidth.value !== "" && fieldHeight.value !== ""
 }
 
-export function deleteTable(gameStartState) {
-    let answer = window.confirm("Are you sure?")
-    if (answer && gameStartState === true) {
-        gameTable.innerHTML = ''
-        webSocket.send(gameTableDeletePrefix)
-    }
+export function deleteTable() {
+    gameTable.innerHTML = ''
+    webSocket.send(gameTableDeletePrefix)
+}
+
+export function disableStartButtonAfterGameInit() {
+    startGameButton.disabled = true
+    finishGameButton.disabled = false
+}
+
+export function enableStartButtonAfterGameEnd() {
+    startGameButton.disabled = false
+    finishGameButton.disabled = true
 }

@@ -1,11 +1,17 @@
 import {messageContainer, gameTable} from "./pageElements.js";
-import {getElementId, drawTableRow, deleteTable, gameTableDeletePrefix} from './gameHandler.js';
+import {getElementId, drawTableRow} from './gameHandler.js';
+import {enableStartButtonAfterGameEnd, disableStartButtonAfterGameInit} from './gameHandler.js';
+import {
+    exceedConnectionsLimitPrefix,
+    serverSapperResponse,
+    drawTableForOtherClient,
+    gameStartedPrefix,
+    gameFinishedPrefix,
+    gameInitializerPrefix,
+    gameTableDeletePrefix
+} from './webSocketMessagePrefixes';
 
 export let webSocket = new WebSocket("ws://localhost:8765/")
-
-const exceedConnectionsLimitPrefix = "__server_exceeded_limit_of_connections"
-const serverSapperResponse = "__sapper_server_response_with_cell_info"
-const drawTableForOtherClient = "__sapper_draw_table_for_other_clients"
 
 export function isOpen(currentWebSocket) {
     return currentWebSocket.readyState === currentWebSocket.OPEN
@@ -14,11 +20,21 @@ export function isOpen(currentWebSocket) {
 export function webSocketOnMessage(event) {
     const message = event.data
 
-    // need to handle it on back
-    // if (message.split(" ")[0] === gameMoveIdentifierPrefix) {
-    //     console.log("Game started!")
-    //     return
-    // }
+    if (message === gameTableDeletePrefix) {
+        enableStartButtonAfterGameEnd()
+        gameTable.innerHTML = ''
+        return
+    }
+    if (message === gameStartedPrefix) {
+        console.log(message)
+        disableStartButtonAfterGameInit()
+        return
+    }
+
+    if (message.split(" ")[0] === gameInitializerPrefix) {
+        disableStartButtonAfterGameInit()
+        return
+    }
 
     if (message.split(" ")[0] === serverSapperResponse) {
         console.log("Move registered!")
@@ -29,25 +45,26 @@ export function webSocketOnMessage(event) {
         if (cellInfo === "X") {
             document.getElementById(cellId).style.backgroundColor = "RED"
             gameTable.removeEventListener("click", getElementId)
+            webSocket.send(gameFinishedPrefix)
             alert("GAME OVER!")
         }
-
         return
     }
-    // if (message.split(" ")[0] === gameTableDeletePrefix) {
-    //     deleteTable()
-    //     return
-    // }
 
     if (message.split(" ")[0] === drawTableForOtherClient) {
         const widthToInt = parseInt(message.split(" ")[1])
         const heightToInt = parseInt(message.split(" ")[2])
+        const gameState = message.split(" ")[3]
         const numberArray = [...Array(heightToInt).keys()]
-        console.log(">>> redraw for others")
         gameTable.innerHTML = ""
         numberArray.forEach((number) => {
             gameTable.insertAdjacentHTML("beforeend", drawTableRow(number, widthToInt))
         })
+
+        if (gameState === "started") {
+            gameTable.addEventListener("click", getElementId)
+        }
+
         return
     }
 
@@ -61,7 +78,6 @@ export function webSocketOnMessage(event) {
 }
 
 export function announceThatWebSocketIsReady() {
-
     try {
         console.log("Websocket connection is ready!")
     } catch (error) {
