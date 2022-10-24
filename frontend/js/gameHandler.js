@@ -6,7 +6,7 @@ import {
     gameMoveIdentifierPrefix,
     gameTableDeletePrefix,
     drawTableForOtherClient
-} from './webSocketMessagePrefixes';
+} from './webSocketMessagePrefixes.js';
 
 export function drawTable(currentWebSocket) {
     const width = fieldWidth.value

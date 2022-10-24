@@ -5,7 +5,6 @@ from backend.sapper.player.core import PlayersContainer, Player
 
 
 class Game:
-
     """
     Functionality according to websockets will be added soon
     """
@@ -36,20 +35,22 @@ class Game:
 
     def wait_for_player_move(self):
         """
-            method for testing game, will be deleted
+            Method for testing game in terminal.
+            Waiting for coordinates input from user
+            and redraw field according to received info.
         """
         while True:
-            for row in self.field.field_to_show_for_user:
-                print(row)
-            x, y = input("\nPlease type x and y coordinates separated by whitespace(like 3 5).\n\n").split(" ")
-            x, y = int(x) - 1, int(y) - 1
+            self.field.redraw_field()
+            x, y = input("\nPlease type y and x coordinates separated by whitespace(like 3 5).\n\n").split(" ")
+
             try:
+                x, y = int(x) - 1, int(y) - 1
                 self.field.update_player_field(x_coordinate=x, y_coordinate=y)
             except GameOverException:
                 print("GAME OVER!")
                 break
             except Exception as exception:
-                print(exception)
+                print(f"{str(exception)}\n")
                 continue
 
     def register_player(self, player: Player):

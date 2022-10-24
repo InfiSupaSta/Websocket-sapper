@@ -135,10 +135,10 @@ class Field:
             if x_coordinate > self.size_x or y_coordinate > self.size_y:
                 print("Pls give correct x and y coordinates.")
                 raise WrongCoordinatesException
-            visible_for_player_cell_info = self.field_to_show_for_user[x_coordinate][y_coordinate]
+            visible_for_player_cell_info = self.field_to_show_for_user[y_coordinate][x_coordinate]
             if visible_for_player_cell_info == "[ ]":
-                actual_cell_info = self.field[x_coordinate][y_coordinate]
-                self.field_to_show_for_user[x_coordinate][y_coordinate] = actual_cell_info
+                actual_cell_info = self.field[y_coordinate][x_coordinate]
+                self.field_to_show_for_user[y_coordinate][x_coordinate] = actual_cell_info
                 break
             else:
                 print("You are already unlocked this cell.")
@@ -149,9 +149,14 @@ class Field:
 
     def _check_last_move(self, cell_info: str):
         if cell_info == "X":
-            for row in self.field_to_show_for_user:
-                print(row)
+            self.redraw_field()
             raise GameOverException
+
+    def redraw_field(self):
+        print(" ".center(5), *[str(index).center(5) for index in range(1, self.size_x + 1)])
+        for index, row in enumerate(self.field_to_show_for_user, 1):
+            nice_looking_output = (f"{element}".center(5) for element in row)
+            print(f"{index}".center(5), *nice_looking_output)
 
     def __repr__(self):
         human_readable_representation = f"Field(size_x={self.size_x}, size_y={self.size_y})"

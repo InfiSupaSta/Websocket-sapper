@@ -9,7 +9,7 @@ import {
     gameFinishedPrefix,
     gameInitializerPrefix,
     gameTableDeletePrefix
-} from './webSocketMessagePrefixes';
+} from './webSocketMessagePrefixes.js';
 
 export let webSocket = new WebSocket("ws://localhost:8765/")
 
